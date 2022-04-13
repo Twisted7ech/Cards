@@ -1,0 +1,38 @@
+/******************************************
+/* CSS
+/*******************************************/
+
+/* Box Model Hack */
+*{
+  box-sizing: border-box;
+}
+
+/******************************************
+/* LAYOUT
+/*******************************************/
+html *  {
+  background: RGB(0,81,44);
+  
+}
+.top {
+  text-align: center;
+}
+.players {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+
+}
+.player1, .player2 {
+  text-align: center;
+}
+button {
+  background-color: white;
+}
+
+.cardback {
+  width: 20%;
+}
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
