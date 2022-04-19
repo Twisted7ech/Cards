@@ -1,123 +1,109 @@
 checkForGame()
-let deckID
-let url = `https://deckofcardsapi.com/api/${deckID}`
-// let player1Hand = []
-class PlayerHand{
-  constructor (code, value, img, suit) {
-      this.code = code
-      this.value = value
-      this.img = img
-      this.suit = suit
-  }
-  remove(){
-      console.log('playing')
-  }
-  add(){
-      console.log('LIKED')
-  }
-  convert(){
-      console.log('sharing with friends')
-  }
-}
 
-// let player1Hand = new PlayerHand('')
-
-let p1codes = []
-let p1imgs = []
-let p1CardsInHand = 0
-let player1Val = 0
-let player1Card = ''
-// let player2Hand = []
-let p2codes = []
-let p2imgs = []
-let p2CardsInHand = 0
-let player2Val = 0
-let player2Card = ''
-
+//  Check for an existing game ID in local storage, if none get new game ID
 function checkForGame(){
-  if (localStorage.getItem('deckID') == null) {
-    getNewDeck
+  if (! localStorage.getItem('deckID')){
+    getNewDeckID
   }else {
     console.log(localStorage.getItem('deckID'))
   }
 }
 
-function getNewDeck(){
+let deckID = localStorage.getItem('deckID')
+let deckarr = []
+let player1Hand = []
+let player2Hand = []
+let url = `https://deckofcardsapi.com/api/${deckID}`
+
+document.querySelector('#newGame').addEventListener('click', getNewDeckID)
+document.querySelector('#dealCards').addEventListener('click', drawCards)
+document.querySelector('#drawTwo').addEventListener('click', playCards)
+addDeckIDToDom()
+
+function addDeckIDToDom(){
+  document.querySelector('#deckID').innerText = deckID
+}
+
+function getNewDeckID(){
   fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
   .then(res => res.json()) // parse response as JSON
   .then(data => {
-    // console.log(data)
+    console.log(data)
     localStorage.setItem('deckID', data.deck_id)
     deckID = data.deck_id
-    dealCards()
+    addDeckIDToDom()
   })
   .catch(err => {
       console.log(`error ${err}`)
   });
 }
 
-document.querySelector('#newGame').addEventListener('click', getNewDeck)
-document.querySelector('#drawTwo').addEventListener('click', playCards)
-document.querySelector('#dealCards').addEventListener('click', makePiles)
-
-//split the deck in half to each player
-function dealCards(){
+function drawCards(){
+  deckarr = []
+  player1Hand = []
+  player2Hand = []
   fetch(`https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=52`)
-      .then(res => res.json()) // parse response as JSON
+  .then(res => res.json()) // parse response as JSON
+  .then(data => {
+        localStorage.removeItem('deck')
+        data.cards.forEach( obj => {
+          let cards = obj
+          // console.log(cards.code)
+          if(!localStorage.getItem('deck')){
+          localStorage.setItem('deck', cards.code)
+          }else {
+            let deck = localStorage.getItem('deck') + ' ; ' + cards.code
+            localStorage.setItem('deck', deck)
+          }
+        })
+        deckarr = localStorage.getItem('deck').split(' ; ')
+        for (i=0; i < deckarr.length;) {
+          player1Hand.push(deckarr.shift())
+          player2Hand.push(deckarr.shift())
+          
+        }
+        addToPiles()
+        // deckarr.forEach((card) => {
+        //   player1Hand.push(deckarr.shift())
+        //   player2Hand.push(deckarr.shift())
+        // })
+        console.log('Cards Delt')
+  })
+  .catch(err => {
+      console.log(`error ${err}`)
+  });
+}
+
+function addToPiles(){
+  let p1update = (player1Hand.toString())
+  // const p1Hand = player1Hand.forEach((element) => {
+    fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1Hand/add/?cards=${p1update}`)
+      .then(res => res.json())
       .then(data => {
         console.log(data)
-        let cards = data.cards
-        for (i = 0; i < 52; i++){
-          if (i % 2 == 0){
-            player1Hand.push(cards[i])
-          }else {
-            player2Hand.push(cards[i])
-          }
-        }
       })
       .catch(err => {
-          console.log(`error ${err}`)
-      });
-}
-
-
-//make separate decks
-function makePiles(){
-  for ( i = 0; i < 26; i++){
-    p1codes.push(player1Hand[i].code)
-  }
-
-  for ( i = 0; i < 26; i++){
-    p2codes.push(player2Hand[i].code)
-  }
-  pushPiles()
-  showCardsInHand()
-}
-
-//push piles to decks
-function pushPiles(){
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1/add?cards=${p1codes}`)
-      .then(res => res.json()) // parse response as JSON
+        console.log(`error ${err}`)
+      })
+  // })
+  localStorage.setItem('player1Hand', p1update)
+  let p2update = (player2Hand.toString())
+  // const p2Hand = player2Hand.forEach((element) => {
+    fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2Hand/add/?cards=${p2update}`)
+      .then(res => res.json())
       .then(data => {
         console.log(data)
-        })
+        showCardsInHand()
+      })
       .catch(err => {
-          console.log(`error ${err}`)
-      });
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2/add?cards=${p2codes}`)
-      .then(res => res.json()) // parse response as JSON
-      .then(data => {
-        console.log(data)
-        })
-      .catch(err => {
-          console.log(`error ${err}`)
-      });
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1/shuffle/`)
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2/shuffle/`)
+        console.log(`error ${err}`)
+      })
+    // })
+  localStorage.setItem('player2Hand', p2update)
+  console.log('Piles updated')
 }
 
-//show player1 hand
-//show player2 hand
+
 function showCardsInHand(){
   document.querySelector('#p1NumOfCards').innerText = player1Hand.length
   document.querySelector('#p2NumOfCards').innerText = player2Hand.length 
@@ -126,25 +112,25 @@ function showCardsInHand(){
 
 //deal card from each hand to compare
 function playCards(){
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1/draw/?count=1`)
+  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1Hand/draw/?count=1`)
     .then(res => res.json())
     .then(data => {
       console.log(data)
       document.querySelector('#player1').src = data.cards[0].image
-      player1Val = Number(data.cards[0].value)
+      player1Val = data.cards[0].value
       player1Card = data.cards[0].code
     })
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2/draw/?count=1`)
+  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2Hand/draw/?count=1`)
     .then(res => res.json())
     .then(data => {
       console.log(data)
       document.querySelector('#player2').src = data.cards[0].image 
-      player2Val = Number(data.cards[0].value)
+      player2Val = data.cards[0].value
       player2Card = data.cards[0].code
     })
     compare
 }
-//show winner
+// show winner
 function compare(){
   if (player1Val == 'ACE'){
     player1Val = Number(14)
@@ -178,20 +164,20 @@ function compare(){
   }
 }
 
-function p1ShowList(){
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1/list/`)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data)
-  })
-}
-function p2ShowList(){
-  fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2/list/`)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data)
-  })
-}
+// function p1ShowList(){
+//   fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player1/list/`)
+//   .then(res => res.json())
+//   .then(data => {
+//     console.log(data)
+//   })
+// }
+// function p2ShowList(){
+//   fetch(`https://deckofcardsapi.com/api/deck/${deckID}/pile/player2/list/`)
+//   .then(res => res.json())
+//   .then(data => {
+//     console.log(data)
+//   })
+// }
 //winner takes both cards
 //if tie deal war cards
 //winner takes all cards
@@ -239,17 +225,50 @@ function p2ShowList(){
 //       });
 // }
 
-function convertToNum(val){
-  if(val === 'ACE'){
-    return 14
-  }else if(val === 'KING'){
-    return 13
-  }else if(val === 'QUEEN'){
-    return 12
-  }else if(val === 'JACK'){
-    return 11
-  }else{
-    return Number(val)
-  }
+// function convertToNum(val){
+//   if(val === 'ACE'){
+//     return 14
+//   }else if(val === 'KING'){
+//     return 13
+//   }else if(val === 'QUEEN'){
+//     return 12
+//   }else if(val === 'JACK'){
+//     return 11
+//   }else{
+//     return Number(val)
+//   }
+// }
+
+
+// class PlayerHand{
+//   constructor (code, img, suit, value) {
+//       this.code = code
+//       this.img = img
+//       this.suit = suit
+//       this.value = value
+//   }
+
+// }
+
+
+function getDog(){
+  fetch(`https://random.dog/woof.json`)
+  .then(res => res.json()) // parse response as JSON
+  .then(data => {
+    console.log(data)
+    document.querySelector('.dog').src = data.url
+  })
+  .catch(err => {
+      console.log(`error ${err}`)
+  });
 }
 
+function getJoke(){
+  fetch(`https://v2.jokeapi.dev/joke/Any?safe-mode`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      document.querySelector('#joke').innerText = data.setup
+      document.querySelector('#punchline').innerText = data.delivery
+    })
+}
