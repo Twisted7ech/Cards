@@ -20,7 +20,7 @@ let cardImage = 'https://deckofcardsapi.com/static/img/'
 let url = `https://deckofcardsapi.com/api/${deckID}`
 
 document.querySelector('#newGame').addEventListener('click', getNewDeckID)
-document.querySelector('#dealCards').addEventListener('click', drawCards)
+// document.querySelector('#dealCards').addEventListener('click', drawCards)
 document.querySelector('#drawTwo').addEventListener('click', playCards)
 addDeckIDToDom()
 
@@ -37,9 +37,10 @@ function getNewDeckID(){
     deckID = data.deck_id
     addDeckIDToDom()
   })
-  .catch(err => {
-      console.log(`error ${err}`)
-  });
+  drawCards()
+  // .catch(err => {
+  //     console.log(`error ${err}`)
+  // });
 }
 
 function drawCards(){
@@ -115,17 +116,29 @@ function addToPiles(){
 function showCardsInHand(){
   document.querySelector('#p1NumOfCards').innerText = player1Hand.length
   if(player1Hand.length === 0){
+    document.querySelector('.player1').sytle.display = 'none'
     alert('Player 2 Wins!')
   }
   document.querySelector('#p2NumOfCards').innerText = player2Hand.length
   if(player2Hand.length === 0){
+    document.querySelector('.player2').sytle.display = 'none'
     alert('Player 1 Wins!')
   }
 }
 
+// function bayonetFunction(){
+//   document.querySelectorAll('.bayonet').forEach(function(el) {
+//     el.style.display = 'block';
+//   });
+// }
 
 //deal card from each hand to compare
 function playCards(){
+  document.querySelectorAll('img.war').forEach(function(toggle) {
+    toggle.style.display = 'none'
+  })
+  document.querySelector('#p1Win').style.display = 'none'
+  document.querySelector('#p2Win').style.display = 'none'
   player1Code = player1Hand[player1Hand.length -1]
     if (player1Code.startsWith('1')){
       player1Val = 1
@@ -238,17 +251,24 @@ function playCards(){
 
 // show winner
 function compare(){
+  document.querySelector('#drawTwo').style.display = 'inline'
   if (player1Val > player2Val){
-    document.querySelector('h3').innerText = 'player1Wins'
+    document.querySelector('#p1Win').style.display = 'inline'
     player1Wins()
 
   }else if (player2Val > player1Val){
-    document.querySelector('h3').innerText = 'player2Wins'
+    document.querySelector('#p2Win').style.display = 'inline'
     player2Wins()
 
   }else {
     document.querySelector('h3').innerText = 'timeForWar'
+    document.querySelector('#drawTwo').style.display = 'none'
+    if (warHand.length === 0){
     war()
+    }else {
+      document.querySelector('#warStart').style.display = 'inline'
+      warRound1
+    }
   }
 
 }
@@ -324,9 +344,8 @@ function player2Wins(){
   // })
   showCardsInHand()
 }
-// function warTimeout(){
-//   setTimeout(clearJoke, 10000)
-// }
+
+
 
 function sleep(milliseconds) {
   const date = Date.now();
@@ -342,74 +361,84 @@ function war(){
   player2Hand.pop()
   warHand.unshift(`${player1Code}`)
   warHand.unshift(`${player2Code}`)
-  warRound1()
+  document.querySelector('#warStart').style.display = 'inline'
 }
   // cards that matched moved to warHand
   // show 2 more cards each 3 times
   // for(i=1;i<4;i++){
     // Round 1
+document.querySelector('#warStart').addEventListener('click', warRound1)
+
 function warRound1(){
+  document.querySelector('#warStart').style.display = 'none'
+
   player1Code = player1Hand[player1Hand.length -1]
   player2Code = player2Hand[player2Hand.length -1]
-  sleep(1000)
-  document.querySelector('#p1War1').style.display = 'block'
-  document.querySelector('#p2War1').style.display = 'block'
+  // sleep(1000)
+  document.querySelector('#p1War1').style.display = 'inline'
+  document.querySelector('#p2War1').style.display = 'inline'
   document.querySelector('#p1War1').src = cardImage + player1Code + '.png'
   document.querySelector('#p2War1').src = cardImage + player2Code + '.png'
-  sleep(1000)
+  // sleep(1000)
   player1Hand.pop()
   player2Hand.pop()
   warHand.unshift(`${player1Code}`)
   warHand.unshift(`${player2Code}`)
   // alert(`Round ${i}`)
-  alert('round1')
-  warRound2()
-}
-function warRound2(){
-  // }
-      // Round 2
-    player1Code = player1Hand[player1Hand.length -1]
-    player2Code = player2Hand[player2Hand.length -1]
-    sleep(1000)
-    document.querySelector('#p1War2').style.display = 'block'
-    document.querySelector('#p2War2').style.display = 'block'
-    document.querySelector('#p1War2').src = cardImage + player1Code + '.png'
-    document.querySelector('#p2War2').src = cardImage + player2Code + '.png'
-    sleep(1000)
-    player1Hand.pop()
-    player2Hand.pop()
-    warHand.unshift(`${player1Code}`)
-    warHand.unshift(`${player2Code}`)
-    // alert(`Round ${i}`)
-    alert('round 2')
-    warRound3()
-  // }
+  document.querySelector('#warRound2').style.display = 'inline'
 }
 
-function warRound3(){
-      // Round 3
-    player1Code = player1Hand[player1Hand.length -1]
-    player2Code = player2Hand[player2Hand.length -1]
-    sleep(1000)
-    document.querySelector('#p1War3').style.display = 'block'
-    document.querySelector('#p2War3').style.display = 'block'
-    document.querySelector('#p1War3').src = cardImage + player1Code + '.png'
-    document.querySelector('#p2War3').src = cardImage + player2Code + '.png'
-    sleep(1000)
-    player1Hand.pop()
-    player2Hand.pop()
-    warHand.unshift(`${player1Code}`)
-    warHand.unshift(`${player2Code}`)
-    // alert(`Round ${i}`)
-    sleep(2000)
-    alert('round 3')
-    warFinal()
+document.querySelector('#warRound2').addEventListener('click', warRound2)
+
+function warRound2(){
+  document.querySelector('#warRound2').style.display = 'none'
+  player1Code = player1Hand[player1Hand.length -1]
+  player2Code = player2Hand[player2Hand.length -1]
+  // sleep(1000)
+  document.querySelector('#p1War2').style.display = 'inline'
+  document.querySelector('#p2War2').style.display = 'inline'
+  document.querySelector('#p1War2').src = cardImage + player1Code + '.png'
+  document.querySelector('#p2War2').src = cardImage + player2Code + '.png'
+  // sleep(1000)
+  player1Hand.pop()
+  player2Hand.pop()
+  warHand.unshift(`${player1Code}`)
+  warHand.unshift(`${player2Code}`)
+  // alert(`Round ${i}`)
+  document.querySelector('#warRound3').style.display = 'inline'
+// }
 }
-  // }
+document.querySelector('#warRound3').addEventListener('click', warRound3)
+
+function warRound3(){
+    // Round 3
+  document.querySelector('#warRound3').style.display = 'none'
+
+  player1Code = player1Hand[player1Hand.length -1]
+  player2Code = player2Hand[player2Hand.length -1]
+  // sleep(1000)
+  document.querySelector('#p1War3').style.display = 'inline'
+  document.querySelector('#p2War3').style.display = 'inline'
+  document.querySelector('#p1War3').src = cardImage + player1Code + '.png'
+  document.querySelector('#p2War3').src = cardImage + player2Code + '.png'
+  // sleep(1000)
+  player1Hand.pop()
+  player2Hand.pop()
+  warHand.unshift(`${player1Code}`)
+  warHand.unshift(`${player2Code}`)
+  // alert(`Round ${i}`)
+  document.querySelector('#warFinal').style.display = 'inline'
+}
+
+document.querySelector('#warFinal').addEventListener('click', warFinal)
+
+
 function warFinal(){
   // 4th pair gets compared and warHand given to winner
+  document.querySelector('#warFinal').style.display = 'none'
+
   player1Code = player1Hand[player1Hand.length -1]
-  document.querySelector('#p1WarFinal').style.display = 'block'
+  document.querySelector('#p1WarFinal').style.display = 'inline'
   document.querySelector('#p1WarFinal').src = cardImage + player1Code + '.png'
   player1Hand.pop()
   warHand.unshift(`${player1Code}`)
@@ -443,8 +472,8 @@ function warFinal(){
         player1Val = 14
     }
   player2Code = player2Hand[player2Hand.length -1]
-  document.querySelector('#p2WarFinal').style.display = 'block'
-  document.querySelector('#p2WarFinal').src = cardImage + player1Code + '.png'  
+  document.querySelector('#p2WarFinal').style.display = 'inline'
+  document.querySelector('#p2WarFinal').src = cardImage + player2Code + '.png'  
     player2Hand.pop()
     warHand.unshift(`${player2Code}`)
       if (player2Code.startsWith('1')){
@@ -476,6 +505,7 @@ function warFinal(){
       }else {
         player2Val = 14
     }
+
     compare()
 }
 

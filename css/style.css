@@ -22,26 +22,29 @@ html *  {
   justify-content: space-around;
 
 }
-/* .player1, .player2 {
-  width:50%;
-} */
+
 img {
   max-height: 250px;
 }
 
 .active {
-  border: red solid 2px;
+  /* border: red solid 2px; */
   height: 254px;
-  display: flex;
-  width: 345px;
+  width: 375px;
+  text-align: center;
+  margin: 0 auto;
 }
-.war {
+img.war {
   margin-left: -140px;
 }
-/* .war {
+.war {
   display:none;
-} */
+}
+/* #warStart{
+  display: inline; */
+}
 .player1, .player2 {
+  /* border: blue solid 2px; */
   text-align: center;
   font-size: 1.5rem;
   color: white;
@@ -53,7 +56,10 @@ button {
 .cardback {
   width: 20%;
 }
-
+section > h3 {
+  color: crimson;
+  display: none;
+}
 #getJoke {
   float:right;
 }
