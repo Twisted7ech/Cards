@@ -22,6 +22,25 @@ html *  {
   justify-content: space-around;
 
 }
+/* .player1, .player2 {
+  width:50%;
+} */
+img {
+  max-height: 250px;
+}
+
+.active {
+  border: red solid 2px;
+  height: 254px;
+  display: flex;
+  width: 345px;
+}
+.war {
+  margin-left: -140px;
+}
+/* .war {
+  display:none;
+} */
 .player1, .player2 {
   text-align: center;
   font-size: 1.5rem;
@@ -35,6 +54,9 @@ button {
   width: 20%;
 }
 
+#getJoke {
+  float:right;
+}
 #joke, #punchline {
   text-align: center;
   font-size: 2rem;
