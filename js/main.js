@@ -44,6 +44,12 @@ function getNewDeckID(){
 }
 
 function drawCards(){
+  document.querySelectorAll('img.war').forEach(function(toggle) {
+    toggle.style.display = 'none'
+  })
+  // document.querySelector('#player1').src = ''
+  // document.querySelector('#player2').src = ''
+
   deckarr = []
   player1Hand = []
   player2Hand = []
@@ -274,17 +280,32 @@ function compare(){
 }
 
 function player1Wins(){
-    player2Hand.pop()
-    player1Hand.pop()
-    player1Hand.unshift(`${player2Code}`)
-    player1Hand.unshift(`${player1Code}`)
-
-    if (warHand.length > 0){
-      for (i=0;i < warHand.length; ){
-        player1Hand.unshift(warHand[0])
-        warHand.shift()
+  var img = document.createElement("img");
+  var src = document.getElementById("p1InHand");
+  img.src = "./img/redfixed.png";
+  img.className = "inHand"
+  if (warHand.length !== 0){
+    for (i=0;i < warHand.length; ){
+      src.appendChild(img);
+      player1Hand.unshift(warHand[0])
+      warHand.shift()
+      if (warHand.length > 5){
+        document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
+      }
+      if (warHand.length === 0) {
+        break
       }
     }
+  }
+  //add a card to p1 hand
+  src.appendChild(img);
+  //remove a card from p2 hand
+  document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
+  player2Hand.pop()
+  player1Hand.pop()
+  player1Hand.unshift(`${player2Code}`)
+  player1Hand.unshift(`${player1Code}`)
+
     
   
     // fetch(`https://deckofcardsapi.com/api/deck/${deckID}/return/?cards=${player1Card},${player2Card}`)
@@ -311,16 +332,32 @@ function player1Wins(){
 }
 
 function player2Wins(){
+  var img = document.createElement("img");
+  var src = document.getElementById("p2InHand");
+  img.src = "./img/redfixed.png";
+  img.className = "inHand"
+  if (warHand.length !== 0){
+    for (i=0;i < warHand.length; ){
+      src.appendChild(img);
+      player2Hand.unshift(warHand[0])
+      warHand.shift()
+      if (warHand.length > 5){
+        document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
+      }
+      if (warHand.length === 0){
+        break
+      }
+    }
+  }
+  //add a card to p1 hand
+  src.appendChild(img);
+  //remove a card from p2 hand
+  document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
   player1Hand.pop()
   player2Hand.pop()
   player2Hand.unshift(`${player1Code}`)
   player2Hand.unshift(`${player2Code}`)
-  if (warHand.length > 0){
-    for (i=0;i < warHand.length; ){
-      player2Hand.unshift(warHand[0])
-      warHand.shift()
-    }
-  }
+
 
   // fetch(`https://deckofcardsapi.com/api/deck/${deckID}/return/?cards=${player1Card},${player2Card}`)
   // .then(res => res.json())
@@ -438,10 +475,13 @@ function warFinal(){
   document.querySelector('#warFinal').style.display = 'none'
 
   player1Code = player1Hand[player1Hand.length -1]
+  //QS
   document.querySelector('#p1WarFinal').style.display = 'inline'
   document.querySelector('#p1WarFinal').src = cardImage + player1Code + '.png'
   player1Hand.pop()
+  //QS
   warHand.unshift(`${player1Code}`)
+  //QS
       if (player1Code.startsWith('1')){
         player1Val = 1
       }else if(player1Code.startsWith('2')){
@@ -472,10 +512,13 @@ function warFinal(){
         player1Val = 14
     }
   player2Code = player2Hand[player2Hand.length -1]
+  //9S
   document.querySelector('#p2WarFinal').style.display = 'inline'
   document.querySelector('#p2WarFinal').src = cardImage + player2Code + '.png'  
     player2Hand.pop()
+    //9S
     warHand.unshift(`${player2Code}`)
+    //9S
       if (player2Code.startsWith('1')){
         player2Val = 1
       }else if(player2Code.startsWith('2')){

@@ -40,8 +40,17 @@ img.war {
 .war {
   display:none;
 }
-/* #warStart{
-  display: inline; */
+#p1InHand, #p2InHand {
+  /* border: solid red 2px; */
+  padding-left: 40px;
+  height: 150px;
+  width: 450px;
+  text-align: center;
+  margin: 0 auto;
+}
+img.inHand {
+  width: 50px;
+  margin-left: -40px;
 }
 .player1, .player2 {
   /* border: blue solid 2px; */
@@ -60,6 +69,7 @@ section > h3 {
   color: crimson;
   display: none;
 }
+
 #getJoke {
   float:right;
 }
@@ -67,6 +77,14 @@ section > h3 {
   text-align: center;
   font-size: 2rem;
 }
+#p1Win {
+  float: left;
+}
+
+#p2Win {
+  float: right;
+}
+
 /******************************************
 /* ADDITIONAL STYLES
 /*******************************************/
