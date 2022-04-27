@@ -58,10 +58,7 @@ function drawCards(){
   .then(data => {
         localStorage.removeItem('deck')
         console.log(data.cards)
-        // data.cards.forEach( obj => {
-        //   let cards = obj
-        //   cardImages.push(cards.image)
-        // })
+
         data.cards.forEach( obj => {
           let cards = obj
           // console.log(cards.code)
@@ -78,10 +75,7 @@ function drawCards(){
           player2Hand.push(deckarr.shift())         
         }
         addToPiles()
-        // deckarr.forEach((card) => {
-        //   player1Hand.push(deckarr.shift())
-        //   player2Hand.push(deckarr.shift())
-        // })
+
         console.log('Cards Delt')
   })
   .catch(err => {
@@ -120,23 +114,35 @@ function addToPiles(){
 
 
 function showCardsInHand(){
+  //show number
   document.querySelector('#p1NumOfCards').innerText = player1Hand.length
+  //show p1 cards = number
+  var p1 = [];
+  var img1 = `<img class='inHand' src="./img/redfixed.png" alt="">`
+  for (i = 0; i < player1Hand.length; i += 1){
+      p1[i] = img1
+  }
+  var p2 = [];
+  var img2 = `<img class='inHand' src="./img/redfixed.png" alt="">`
+  for (i = 0; i < player2Hand.length; i += 1){
+      p2[i] = img2
+  }
+
+  document.getElementById('p1InHand').innerHTML = p1;
+  document.getElementById('p2InHand').innerHTML = p2;
+  //check if player1 hand empty
   if(player1Hand.length === 0){
-    document.querySelector('.player1').sytle.display = 'none'
+    document.querySelector('.player1').style.display = 'none'
     alert('Player 2 Wins!')
   }
+  //check if player2 hand empty
   document.querySelector('#p2NumOfCards').innerText = player2Hand.length
   if(player2Hand.length === 0){
-    document.querySelector('.player2').sytle.display = 'none'
+    document.querySelector('.player2').style.display = 'none'
     alert('Player 1 Wins!')
   }
 }
 
-// function bayonetFunction(){
-//   document.querySelectorAll('.bayonet').forEach(function(el) {
-//     el.style.display = 'block';
-//   });
-// }
 
 //deal card from each hand to compare
 function playCards(){
@@ -145,6 +151,9 @@ function playCards(){
   })
   document.querySelector('#p1Win').style.display = 'none'
   document.querySelector('#p2Win').style.display = 'none'
+  document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
+  document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
+
   player1Code = player1Hand[player1Hand.length -1]
     if (player1Code.startsWith('1')){
       player1Val = 1
@@ -280,27 +289,15 @@ function compare(){
 }
 
 function player1Wins(){
-  var img = document.createElement("img");
-  var src = document.getElementById("p1InHand");
-  img.src = "./img/redfixed.png";
-  img.className = "inHand"
   if (warHand.length !== 0){
     for (i=0;i < warHand.length; ){
-      src.appendChild(img);
       player1Hand.unshift(warHand[0])
       warHand.shift()
-      if (warHand.length > 5){
-        document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
-      }
       if (warHand.length === 0) {
         break
       }
     }
   }
-  //add a card to p1 hand
-  src.appendChild(img);
-  //remove a card from p2 hand
-  document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
   player2Hand.pop()
   player1Hand.pop()
   player1Hand.unshift(`${player2Code}`)
@@ -332,27 +329,15 @@ function player1Wins(){
 }
 
 function player2Wins(){
-  var img = document.createElement("img");
-  var src = document.getElementById("p2InHand");
-  img.src = "./img/redfixed.png";
-  img.className = "inHand"
   if (warHand.length !== 0){
     for (i=0;i < warHand.length; ){
-      src.appendChild(img);
       player2Hand.unshift(warHand[0])
       warHand.shift()
-      if (warHand.length > 5){
-        document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
-      }
       if (warHand.length === 0){
         break
       }
     }
   }
-  //add a card to p1 hand
-  src.appendChild(img);
-  //remove a card from p2 hand
-  document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
   player1Hand.pop()
   player2Hand.pop()
   player2Hand.unshift(`${player1Code}`)
@@ -399,16 +384,14 @@ function war(){
   warHand.unshift(`${player1Code}`)
   warHand.unshift(`${player2Code}`)
   document.querySelector('#warStart').style.display = 'inline'
+  showCardsInHand()
 }
-  // cards that matched moved to warHand
-  // show 2 more cards each 3 times
-  // for(i=1;i<4;i++){
-    // Round 1
+
+// Round 1
 document.querySelector('#warStart').addEventListener('click', warRound1)
 
 function warRound1(){
   document.querySelector('#warStart').style.display = 'none'
-
   player1Code = player1Hand[player1Hand.length -1]
   player2Code = player2Hand[player2Hand.length -1]
   // sleep(1000)
@@ -423,8 +406,10 @@ function warRound1(){
   warHand.unshift(`${player2Code}`)
   // alert(`Round ${i}`)
   document.querySelector('#warRound2').style.display = 'inline'
+  showCardsInHand()
 }
 
+// Round 2
 document.querySelector('#warRound2').addEventListener('click', warRound2)
 
 function warRound2(){
@@ -444,13 +429,16 @@ function warRound2(){
   // alert(`Round ${i}`)
   document.querySelector('#warRound3').style.display = 'inline'
 // }
+  showCardsInHand()
 }
+
+// Round 3
 document.querySelector('#warRound3').addEventListener('click', warRound3)
 
 function warRound3(){
-    // Round 3
   document.querySelector('#warRound3').style.display = 'none'
-
+  document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
+  document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
   player1Code = player1Hand[player1Hand.length -1]
   player2Code = player2Hand[player2Hand.length -1]
   // sleep(1000)
@@ -465,23 +453,22 @@ function warRound3(){
   warHand.unshift(`${player2Code}`)
   // alert(`Round ${i}`)
   document.querySelector('#warFinal').style.display = 'inline'
+  showCardsInHand()
 }
 
 document.querySelector('#warFinal').addEventListener('click', warFinal)
 
-
+// War Final
 function warFinal(){
   // 4th pair gets compared and warHand given to winner
   document.querySelector('#warFinal').style.display = 'none'
-
+  document.querySelector('#p1InHand').removeChild(document.querySelector('#p1InHand').querySelector('img'))
+  document.querySelector('#p2InHand').removeChild(document.querySelector('#p2InHand').querySelector('img'))
   player1Code = player1Hand[player1Hand.length -1]
-  //QS
   document.querySelector('#p1WarFinal').style.display = 'inline'
   document.querySelector('#p1WarFinal').src = cardImage + player1Code + '.png'
   player1Hand.pop()
-  //QS
   warHand.unshift(`${player1Code}`)
-  //QS
       if (player1Code.startsWith('1')){
         player1Val = 1
       }else if(player1Code.startsWith('2')){
@@ -512,13 +499,10 @@ function warFinal(){
         player1Val = 14
     }
   player2Code = player2Hand[player2Hand.length -1]
-  //9S
   document.querySelector('#p2WarFinal').style.display = 'inline'
   document.querySelector('#p2WarFinal').src = cardImage + player2Code + '.png'  
     player2Hand.pop()
-    //9S
     warHand.unshift(`${player2Code}`)
-    //9S
       if (player2Code.startsWith('1')){
         player2Val = 1
       }else if(player2Code.startsWith('2')){
